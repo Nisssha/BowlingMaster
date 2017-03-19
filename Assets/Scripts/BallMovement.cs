@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BallMovement : MonoBehaviour {
 
-    // Use this for initialization
     public Vector3 launchSpeed;
     private Rigidbody ball;
     private AudioSource audioPlay;
@@ -12,46 +11,53 @@ public class BallMovement : MonoBehaviour {
 	private Vector3 startingPosition;
 	public bool inPlay = false;
 
-	void Start () {
+	void Start ()
+    {
         ball = GetComponent<Rigidbody>();
         ball.useGravity = false;
         audioPlay = FindObjectOfType<AudioSource>();
         startingPosition = transform.position;
 	}
 
+    // Launching the ball
     public void Launch(Vector3 launchSpeed)
     {
-    if (!inPlay){
+    if (!inPlay)
+        {
     	inPlay = true;
-
 		ball.useGravity = true;
         ball.velocity = launchSpeed;
         audioPlay.Play();
         }
     }
 
-    public void TweakPositionRight () {
-    	if (ball.transform.position.z == 10){
+    //Move the ball before game has started to the right
+    public void TweakPositionRight ()
+    {
+    	if (ball.transform.position.z == 10)
+        {
     		xposition = ball.transform.position.x + 1;
     		ball.transform.position = new Vector3 (xposition, ball.transform.position.y, ball.transform.position.z);
     	}
     }
 
-	public void TweakPositionLeft () {
-		if (ball.transform.position.z == 10){
+    //Move the ball before game has started to the left
+    public void TweakPositionLeft ()
+    {
+		if (ball.transform.position.z == 10)
+        {
     		xposition = ball.transform.position.x - 1;
     		ball.transform.position = new Vector3 (xposition, ball.transform.position.y, ball.transform.position.z);
     	}
     }
 
-    public void Reset() {
+    //moving ball back to the start position and setting the movement to none
+    public void Reset()
+    {
     	inPlay = false;
     	transform.position = startingPosition;
     	ball.velocity = new Vector3 (0f, 0f, 0f);
     	ball.angularVelocity = new Vector3 (0f, 0f, 0f);
     	ball.rotation = (Quaternion.identity);
-
-    	//Debug.Log (transform.position);
-
     }
 }

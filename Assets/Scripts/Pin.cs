@@ -8,11 +8,13 @@ public float standingThreshold = 3f;
 public float distanceToRaise = 40f;
 private Rigidbody rigidBody;
 
-void Start() {
+void Start()
+    {
 	rigidBody = GetComponent<Rigidbody>();
-
-}
-	public bool IsStanding()
+    } 
+ 
+//check if pins are standing (check threshold to check wobbling pins)    
+public bool IsStanding()
 {
     float tiltX = (transform.eulerAngles.x < 180f) ? transform.eulerAngles.x : 360 - transform.eulerAngles.x;
     float tiltZ = (transform.eulerAngles.z < 180f) ? transform.eulerAngles.z : 360 - transform.eulerAngles.z;
@@ -20,13 +22,15 @@ void Start() {
     if (tiltX > standingThreshold || tiltZ > standingThreshold)
     {
         return false;
-    }
-         
+    }    
     return true;
 }
 
-	public void RaiseIfStanding() {
-	if(IsStanding()){
+//raising pins and setting them to no movement
+public void RaiseIfStanding()
+    {
+	if(IsStanding())
+        {
 		rigidBody.useGravity = false;
 		transform.Translate(new Vector3 (0f, distanceToRaise, 0f), Space.World);
 		rigidBody.velocity = new Vector3 (0f, 0f, 0f);
@@ -35,16 +39,15 @@ void Start() {
 		}
 }
 
-public void LowerIfStanding() {
-	if(IsStanding()){
+    //lowering pins
+public void LowerIfStanding()
+    {
+	if(IsStanding())
+        {
 		transform.Translate(new Vector3 (0f, -distanceToRaise, 0f), Space.World);
 		rigidBody.useGravity = true;
 		}
-}
-
-public void RenewPins () {
-}
-
+    }
 }
 
 

@@ -13,83 +13,91 @@ public class PinCounter : MonoBehaviour {
 	public Text amountOfPinsText;
 	private GameManager gameManager;
 
-	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 		gameManager = GameObject.FindObjectOfType<GameManager>();
-		//Action currentAction = new Action();
 	}
-	
-	// Update is called once per frame
-	void Update () {
 
-		if (ballOutOfPlay){
+    //count standing pins, display the amount
+void Update ()
+    {
+		if (ballOutOfPlay)
+        {
 		CheckStanding();
 		amountOfPinsText.color = Color.magenta;
 		amountOfPinsText.text = CountStandingPins().ToString();
 		}
 	}
 
-	public void Reset(){
+    //reset the number of standing 
+public void Reset()
+    {
 		lastSettled = 10;
 	}
 
-	void CheckStanding () {
-	int currentStanding = CountStandingPins();
+    //check how many pins are standing, if number have change since last check: set the time of change and number of pins standing
+    //after 3 seconds call PinsHaveSettled()
+void CheckStanding ()
+    {
+	    int currentStanding = CountStandingPins();
 
-	if (currentStanding != lastStandingCount) {
-		lastChangeTime = Time.time;
-		lastStandingCount = currentStanding;
-		return;
-	}
+	    if (currentStanding != lastStandingCount)
+        {
+		    lastChangeTime = Time.time;
+		    lastStandingCount = currentStanding;
+		    return;
+	    }
 
-	float settleTime = 3f;
-	if (Time.time - lastChangeTime > settleTime){
-		PinsHaveSettled();
-	}
+	    float settleTime = 3f;
+	    if (Time.time - lastChangeTime > settleTime)
+        {
+		    PinsHaveSettled();
+	    }
 }
 
-void PinsHaveSettled () {
+    //check how many pins are standing and update the amount
+    //call funtion Bowl with amount of pins fallen and display number of standing pins
+void PinsHaveSettled ()
+    {
+	    int standing = CountStandingPins();
+	    int pinsFallen = lastSettled - standing;
+	    lastSettled = standing;
 
-	int standing = CountStandingPins();
-	int pinsFallen = lastSettled - standing;
-	lastSettled = standing;
+	    gameManager.Bowl(pinsFallen);
 
-	gameManager.Bowl(pinsFallen);
+	    lastStandingCount = -1;
+	    ballOutOfPlay = false;
+	    amountOfPinsText.text = CountStandingPins().ToString();
+	    amountOfPinsText.color = Color.green;
+    }
 
-	lastStandingCount = -1;
-	ballOutOfPlay = false;
-	amountOfPinsText.text = CountStandingPins().ToString();
-	amountOfPinsText.color = Color.green;
-}
-
-int CountStandingPins () {
+    //count standing pins through pin function IsStanding and return number of standing pins
+int CountStandingPins ()
+    {
 	int standingPinsNumber = 0;
 
-		foreach (Pin pinObject in GameObject.FindObjectsOfType<Pin>()) {
-
-			if(pinObject.IsStanding()){
+		foreach (Pin pinObject in GameObject.FindObjectsOfType<Pin>())
+        {
+			if(pinObject.IsStanding())
+            {
 				standingPinsNumber ++;
 			}
 		}
 		return standingPinsNumber;
-}
+    }
 
-//void OnTriggerEnter (Collider coll){
-//
-//	if (coll.GetComponent<BallMovement>()){
-//	amountOfPinsText.color = Color.red;
-//	ballOutOfPlay = true;
-//	}
-//}
-	void OnTriggerExit(Collider coll){
-		if (coll.gameObject.name == "Ball"){
+    //handling events when object leaves the box collider on the end
+void OnTriggerExit(Collider coll)
+    {
+        //the object is Ball
+		if (coll.gameObject.name == "Ball")
+        {
 			ballOutOfPlay = true;
-			}
-		if (coll.gameObject.GetComponentInParent<Pin>()){
-			Debug.Log("Pin left the collider");
-		Destroy(coll.transform.parent.gameObject);
+		}
+        //the object is a pin - destroy it
+		if (coll.gameObject.GetComponentInParent<Pin>())
+        {
+		    Destroy(coll.transform.parent.gameObject);
+	    }
 	}
-	}
-
-
 }
